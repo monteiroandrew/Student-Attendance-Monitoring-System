@@ -1,12 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendify</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>AA</h1>
-    <h1>adwawdawdawdasd</h1>
+
+  <div class="container">
+    <!-- Left Hero Banner Panel -->
+    <div class="left-panel">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <span>Attendify</span>
+      </div>
+
+      <div class="left-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          SMART ATTENDANCE
+        </div>
+        <h1 class="hero-title">Every class,<br>accounted for.</h1>
+        <p class="hero-description">
+          A simpler way for students and teachers to track attendance, stay organized, and focus on learning.
+        </p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">98%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">24/7</div>
+          <div class="stat-label">Access</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">1 tap</div>
+          <div class="stat-label">Check-in</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="right-panel">
+      <div class="form-header">
+        <div class="welcome-text">Welcome to Attendify</div>
+        <h2 class="main-title" id="form-heading">Sign in to continue</h2>
+        <p class="sub-title" id="form-subheading">Access your attendance dashboard and class records.</p>
+      </div>
+
+      <!-- Auth Tab Toggle -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign in</button>
+        <button type="button" class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create account</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleLogin(event)">
+        <!-- Role Selection -->
+        <div class="form-group">
+          <label class="form-label">I am a</label>
+          <div class="role-selection">
+            <button type="button" class="role-btn active" id="role-student" onclick="selectRole('student')">
+              <i class="fa-solid fa-graduation-cap"></i> Student
+            </button>
+            <button type="button" class="role-btn" id="role-teacher" onclick="selectRole('teacher')">
+              <i class="fa-regular fa-user"></i> Teacher
+            </button>
+          </div>
+        </div>
+
+        <!-- Full Name Field (Hidden by default, shown in Sign Up mode) -->
+        <div class="form-group hidden" id="fullname-group">
+          <label class="form-label">Full name</label>
+          <div class="input-wrapper">
+            <input type="text" class="input-control" placeholder="Enter your full name">
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" id="email-label">Student email</label>
+          <div class="input-wrapper">
+            <input type="email" class="input-control" placeholder="name@school.edu" required>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="password-input" class="input-control" placeholder="Enter your password" required>
+            <i class="fa-regular fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+          </div>
+        </div>
+
+        <!-- Sign-in Options -->
+        <div class="form-options" id="signin-options">
+          <label class="remember-me">
+            <input type="checkbox">
+            Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span>Sign in to Attendify</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <!-- Footer Link -->
+        <div class="form-footer" id="form-footer">
+          Don't have an account? <a href="#" onclick="switchAuthTab('signup'); return false;">Create account</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentAuthMode = 'signin';
+    let currentRole = 'student';
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const emailInput = document.querySelector('input[type="email"]').value.trim();
+      
+      if (emailInput) {
+        localStorage.setItem('currentUser', emailInput);
+        localStorage.setItem('currentUserRole', currentRole);
+        window.location.href = currentRole === 'teacher'
+          ? '/teacher.html?from=signin'
+          : '/studentDb.html?from=signin';
+      }
+    }
+
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+
+      const tabSignin = document.getElementById('tab-signin');
+      const tabSignup = document.getElementById('tab-signup');
+      const heading = document.getElementById('form-heading');
+      const subheading = document.getElementById('form-subheading');
+      const fullnameGroup = document.getElementById('fullname-group');
+      const signinOptions = document.getElementById('signin-options');
+      const submitBtn = document.getElementById('submit-btn');
+      const formFooter = document.getElementById('form-footer');
+      const passwordInput = document.getElementById('password-input');
+
+      if (mode === 'signin') {
+        tabSignin.classList.add('active');
+        tabSignup.classList.remove('active');
+        heading.innerText = 'Sign in to continue';
+        subheading.innerText = 'Access your attendance dashboard and class records.';
+        fullnameGroup.classList.add('hidden');
+        signinOptions.classList.remove('hidden');
+        submitBtn.querySelector('span').innerText = 'Sign in to Attendify';
+        passwordInput.placeholder = 'Enter your password';
+        formFooter.innerHTML = 'Don\'t have an account? <a href="#" onclick="switchAuthTab(\'signup\'); return false;">Create account</a>';
+      } else {
+        tabSignup.classList.add('active');
+        tabSignin.classList.remove('active');
+        heading.innerText = 'Create your account';
+        subheading.innerText = 'Join your school community in just a few steps.';
+        fullnameGroup.classList.remove('hidden');
+        signinOptions.classList.add('hidden');
+        submitBtn.querySelector('span').innerText = 'Create my account';
+        passwordInput.placeholder = 'At least 6 characters';
+        formFooter.innerHTML = 'Already have an account? <a href="#" onclick="switchAuthTab(\'signin\'); return false;">Sign in</a>';
+      }
+    }
+
+    function selectRole(role) {
+      currentRole = role;
+      const studentBtn = document.getElementById('role-student');
+      const teacherBtn = document.getElementById('role-teacher');
+      const emailLabel = document.getElementById('email-label');
+
+      if (role === 'student') {
+        studentBtn.classList.add('active');
+        teacherBtn.classList.remove('active');
+        emailLabel.innerText = 'Student email';
+      } else {
+        teacherBtn.classList.add('active');
+        studentBtn.classList.remove('active');
+        emailLabel.innerText = 'Teacher email';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password-input');
+      const eyeIcon = document.querySelector('.toggle-password');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    }
+  </script>
 </body>
 </html>
