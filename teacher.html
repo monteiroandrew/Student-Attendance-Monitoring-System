@@ -1,4 +1,3 @@
-  if (!currentUserEmail || currentUserRole !== 'teacher' || new URLSearchParams(window.location.search).get('from') !== 'signin') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -275,6 +274,21 @@
       border-radius: 12px;
     }
 
+    .delete-section-btn {
+      padding: 4px 8px;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      background: #fff;
+      color: #b91c1c;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .delete-section-btn:hover {
+      background: #fef2f2;
+    }
+
     .folder-sec-tag {
       font-size: 0.68rem;
       font-weight: 700;
@@ -531,6 +545,89 @@
       cursor: pointer;
     }
 
+    .btn-submit:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-delete-confirm {
+      padding: 10px 18px;
+      background: #b91c1c;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    .btn-delete-confirm:hover {
+      background: #991b1b;
+    }
+
+    .start-attendance-btn,
+    .edit-section-btn {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .start-attendance-btn:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 14px rgba(29, 89, 75, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .edit-section-btn:hover {
+      background: #eaf4f0;
+      border-color: #b7d4ca;
+      box-shadow: 0 6px 14px rgba(31, 41, 55, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .start-attendance-btn:active,
+    .edit-section-btn:active {
+      box-shadow: none;
+      transform: translateY(0);
+    }
+
+    .start-attendance-btn:focus-visible,
+    .edit-section-btn:focus-visible {
+      outline: 3px solid #78b9a5;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .start-attendance-btn,
+      .edit-section-btn {
+        transition: none;
+      }
+    }
+
+    .delete-confirm-overlay {
+      z-index: 300;
+    }
+
+    .delete-password-overlay {
+      z-index: 400;
+    }
+
+    .edit-section-overlay {
+      z-index: 250;
+    }
+
+    .delete-confirm-icon {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 14px;
+      border-radius: 10px;
+      background: #fef2f2;
+      color: #b91c1c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
     /* Section Details Full View Modal (Image 3) */
     .view-modal-overlay {
       position: fixed;
@@ -560,13 +657,58 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 9px;
+      padding: 7px 15px 7px 8px;
+      border: 1px solid #cfe2db;
+      border-radius: 999px;
+      background: #ffffff;
       font-size: 0.8rem;
-      color: var(--text-muted);
+      font-weight: 700;
+      color: var(--primary-green);
       cursor: pointer;
-      border: none;
-      background: none;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 6px rgba(29, 89, 75, 0.06);
+      transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+
+    .back-btn-icon {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #eaf4f0;
+      color: var(--primary-green);
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--primary-green);
+      border-color: var(--primary-green);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(29, 89, 75, 0.2);
+      transform: translateX(-2px);
+    }
+
+    .back-btn:hover .back-btn-icon {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .back-btn:focus-visible {
+      outline: 3px solid #78b9a5;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .back-btn,
+      .back-btn-icon {
+        transition: none;
+      }
     }
 
     .section-hero {
@@ -633,6 +775,335 @@
     .status-late { background: #fef3c7; color: #b45309; }
     .status-absent { background: #fee2e2; color: #dc2626; }
     .status-unmarked { background: #f3f4f6; color: #4b5563; }
+
+    .attendance-student-row {
+      cursor: pointer;
+      transition: background-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .attendance-student-row:hover td {
+      background: #f0f7f3;
+    }
+
+    .attendance-student-row:focus {
+      outline: none;
+    }
+
+    .attendance-student-row:focus-visible td {
+      background: #f0f7f3;
+      box-shadow: inset 0 2px #78b9a5, inset 0 -2px #78b9a5;
+    }
+
+    .attendance-student-row:focus-visible td:first-child {
+      box-shadow: inset 2px 0 #78b9a5, inset 0 2px #78b9a5, inset 0 -2px #78b9a5;
+    }
+
+    .attendance-student-row:focus-visible td:last-child {
+      box-shadow: inset -2px 0 #78b9a5, inset 0 2px #78b9a5, inset 0 -2px #78b9a5;
+    }
+
+    .calendar-nav-btn:focus-visible {
+      outline: 3px solid #78b9a5;
+      outline-offset: 3px;
+    }
+
+    .attendance-entry-overlay,
+    .student-calendar-overlay {
+      z-index: 500;
+    }
+
+    .attendance-entry-box {
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .attendance-entry-table-wrap {
+      max-height: 45vh;
+      overflow: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+    }
+
+    .attendance-entry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .attendance-entry-table th,
+    .attendance-entry-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f3f4f6;
+      text-align: left;
+    }
+
+    .attendance-entry-table th {
+      position: sticky;
+      top: 0;
+      background: #fafafa;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    .attendance-entry-table select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text-main);
+    }
+
+    .calendar-modal-box {
+      max-width: 640px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .calendar-student-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .calendar-student-avatar {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #eaf4f0;
+      color: var(--primary-green);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .calendar-student-name {
+      color: #111827;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .calendar-student-id {
+      margin-top: 2px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .calendar-close-btn {
+      margin-left: auto;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: #f3f6f4;
+      color: #6b7280;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .calendar-content {
+      padding: 20px 24px 24px;
+    }
+
+    .calendar-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .calendar-heading {
+      margin-right: auto;
+    }
+
+    .calendar-heading .modal-tag {
+      color: #9ca3af;
+      font-size: 0.65rem;
+    }
+
+    .calendar-month-title {
+      margin-top: 3px;
+      color: #1f2937;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .calendar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #6b7280;
+      font-size: 0.68rem;
+    }
+
+    .calendar-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .calendar-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .calendar-legend-dot.present { background: #4b9b73; }
+    .calendar-legend-dot.late { background: #d28a2e; }
+    .calendar-legend-dot.absent { background: #cf5b5b; }
+
+    .calendar-nav-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #fff;
+      color: #374151;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      border-top: 1px solid var(--border-color);
+      border-left: 1px solid var(--border-color);
+    }
+
+    .calendar-weekday,
+    .calendar-day {
+      min-width: 0;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .calendar-weekday {
+      padding: 8px 4px;
+      background: #fafbfa;
+      color: #9ca3af;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      min-height: 60px;
+      padding: 7px;
+      background: #fff;
+    }
+
+    .calendar-day.is-empty {
+      background: #fafbfa;
+    }
+
+    .calendar-day-number {
+      color: #6b7280;
+      font-size: 0.68rem;
+    }
+
+    .calendar-day-status {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.56rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .calendar-day.status-present { background: #f1f8f4; }
+    .calendar-day.status-present .calendar-day-number,
+    .calendar-day.status-present .calendar-day-status { color: #438866; }
+    .calendar-day.status-late { background: #fff8ed; }
+    .calendar-day.status-late .calendar-day-number,
+    .calendar-day.status-late .calendar-day-status { color: #b8751c; }
+    .calendar-day.status-absent { background: #fff4f4; }
+    .calendar-day.status-absent .calendar-day-number,
+    .calendar-day.status-absent .calendar-day-status { color: #c64f4f; }
+
+    .calendar-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 16px;
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: #f5f8f6;
+    }
+
+    .calendar-summary-item {
+      text-align: center;
+    }
+
+    .calendar-summary-item + .calendar-summary-item {
+      border-left: 1px solid #e3ebe6;
+    }
+
+    .calendar-summary-count {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .calendar-summary-count.present { color: #438866; }
+    .calendar-summary-count.late { color: #b8751c; }
+    .calendar-summary-count.absent { color: #c64f4f; }
+
+    .calendar-summary-label {
+      margin-top: 3px;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+    }
+
+    .calendar-empty-message {
+      margin-top: 12px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .attendance-student-row {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .calendar-modal-box {
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .calendar-student-header {
+        padding: 16px;
+      }
+
+      .calendar-content {
+        padding: 16px;
+      }
+
+      .calendar-toolbar {
+        flex-wrap: wrap;
+      }
+
+      .calendar-legend {
+        width: 100%;
+        order: 1;
+      }
+
+      .calendar-day {
+        min-height: 52px;
+        padding: 5px;
+      }
+
+      .calendar-day-status {
+        margin-top: 6px;
+        font-size: 0.48rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -754,16 +1225,59 @@
     </div>
   </div>
 
+  <div class="modal-overlay edit-section-overlay" id="edit-section-modal" role="dialog" aria-modal="true" aria-labelledby="edit-section-title">
+    <div class="modal-box">
+      <button type="button" class="modal-close" onclick="closeEditSectionModal()" aria-label="Close">✕</button>
+      <div class="modal-tag">CLASS DETAILS</div>
+      <h3 class="modal-title" id="edit-section-title">Edit section</h3>
+      <p class="modal-sub">Update the class information below.</p>
+
+      <form onsubmit="handleEditSection(event)">
+        <div class="form-group">
+          <label class="form-label" for="edit-subject">Class name</label>
+          <input type="text" id="edit-subject" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-section">Section name</label>
+          <input type="text" id="edit-section" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-room">Room</label>
+          <input type="text" id="edit-room" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-schedule">Schedule</label>
+          <input type="text" id="edit-schedule" class="form-input" required>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeEditSectionModal()">Cancel</button>
+          <button type="submit" class="btn-submit">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Detailed Attendance Section View Modal (Matching Image 3) -->
   <div class="view-modal-overlay" id="section-view-modal">
     <div class="view-header">
       <div>
-        <button class="back-btn" onclick="closeSectionView()">← All sections</button>
+        <button class="back-btn" onclick="closeSectionView()">
+          <span class="back-btn-icon" aria-hidden="true">←</span>
+          <span>All sections</span>
+        </button>
         <div style="font-size: 0.8rem; font-weight: 700; color: #2b7a66;" id="view-meta-code">CS 305 · Section C</div>
         <h1 style="font-size: 1.85rem; font-weight: 800; color: #111827;" id="view-hero-title">Data Structures</h1>
         <p style="font-size: 0.82rem; color: var(--text-muted);">Review today's status and each student's attendance history.</p>
       </div>
-      <button class="btn-submit" style="padding: 10px 18px; font-size: 0.85rem;">+ Start attendance</button>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" class="btn-cancel edit-section-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="openEditSectionModal()">Edit section</button>
+        <button type="button" class="btn-submit start-attendance-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="openAttendanceEntry()">+ Start attendance</button>
+        <button type="button" class="delete-section-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="deleteSection()">Delete class</button>
+      </div>
     </div>
 
     <div class="section-hero">
@@ -812,6 +1326,109 @@
     </div>
   </div>
 
+  <div class="modal-overlay attendance-entry-overlay" id="attendance-entry-modal" role="dialog" aria-modal="true" aria-labelledby="attendance-entry-title">
+    <div class="modal-box attendance-entry-box">
+      <button type="button" class="modal-close" onclick="closeAttendanceEntry()" aria-label="Close">✕</button>
+      <div class="modal-tag">CLASS ATTENDANCE</div>
+      <h3 class="modal-title" id="attendance-entry-title">Record attendance</h3>
+      <p class="modal-sub">Choose a status for each student. Saving updates their attendance calendar.</p>
+      <form onsubmit="saveAttendance(event)">
+        <div class="form-group">
+          <label class="form-label" for="attendance-date">Class date</label>
+          <input type="date" id="attendance-date" class="form-input" onchange="renderAttendanceEntryRows()" required>
+        </div>
+        <div class="attendance-entry-table-wrap">
+          <table class="attendance-entry-table">
+            <thead>
+              <tr><th>Student</th><th>Status</th></tr>
+            </thead>
+            <tbody id="attendance-entry-rows"></tbody>
+          </table>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeAttendanceEntry()">Cancel</button>
+          <button type="submit" class="btn-submit" id="save-attendance-btn">Save attendance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay student-calendar-overlay" id="student-calendar-modal" role="dialog" aria-modal="true" aria-labelledby="student-calendar-name">
+    <div class="modal-box calendar-modal-box">
+      <div class="calendar-student-header">
+        <div class="calendar-student-avatar" id="student-calendar-avatar"></div>
+        <div>
+          <div class="calendar-student-name" id="student-calendar-name"></div>
+          <div class="calendar-student-id" id="student-calendar-id"></div>
+        </div>
+        <button type="button" class="calendar-close-btn" onclick="closeStudentCalendar()" aria-label="Close attendance calendar">×</button>
+      </div>
+      <div class="calendar-content">
+        <div class="calendar-toolbar">
+          <div class="calendar-heading">
+            <div class="modal-tag">ATTENDANCE CALENDAR</div>
+            <h2 class="calendar-month-title" id="student-calendar-month"></h2>
+          </div>
+          <div class="calendar-legend" aria-label="Attendance status legend">
+            <span class="calendar-legend-item"><span class="calendar-legend-dot present"></span>Present</span>
+            <span class="calendar-legend-item"><span class="calendar-legend-dot late"></span>Late</span>
+            <span class="calendar-legend-item"><span class="calendar-legend-dot absent"></span>Absent</span>
+          </div>
+          <button type="button" class="calendar-nav-btn" onclick="changeStudentCalendarMonth(-1)" aria-label="Previous month">‹</button>
+          <button type="button" class="calendar-nav-btn" onclick="changeStudentCalendarMonth(1)" aria-label="Next month">›</button>
+        </div>
+        <div class="calendar-grid" id="student-calendar-grid"></div>
+        <div class="calendar-empty-message" id="student-calendar-empty"></div>
+        <div class="calendar-summary" aria-label="Attendance totals for this month">
+          <div class="calendar-summary-item">
+            <div class="calendar-summary-count present" id="calendar-present-count">0</div>
+            <div class="calendar-summary-label">Present</div>
+          </div>
+          <div class="calendar-summary-item">
+            <div class="calendar-summary-count late" id="calendar-late-count">0</div>
+            <div class="calendar-summary-label">Late</div>
+          </div>
+          <div class="calendar-summary-item">
+            <div class="calendar-summary-count absent" id="calendar-absent-count">0</div>
+            <div class="calendar-summary-label">Absent</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay delete-confirm-overlay" id="delete-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
+    <div class="modal-box">
+      <div class="delete-confirm-icon" aria-hidden="true">!</div>
+      <div class="modal-tag">DELETE CLASS</div>
+      <h3 class="modal-title" id="delete-confirm-title">Are you sure?</h3>
+      <p class="modal-sub" id="delete-confirm-message">Are you sure you want to delete this class? This will also remove its students and class data.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeDeleteConfirmation()">Cancel</button>
+        <button type="button" class="btn-delete-confirm" onclick="requestDeletePassword()">Delete class</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay delete-password-overlay" id="delete-password-modal" role="dialog" aria-modal="true" aria-labelledby="delete-password-title" aria-describedby="delete-password-message">
+    <div class="modal-box">
+      <div class="delete-confirm-icon" aria-hidden="true">!</div>
+      <div class="modal-tag">FINAL CONFIRMATION</div>
+      <h3 class="modal-title" id="delete-password-title">Enter your password</h3>
+      <p class="modal-sub" id="delete-password-message">Type your password to continue deleting this class. Password entry is required to proceed.</p>
+      <form onsubmit="handleDeletePasswordConfirmation(event)">
+        <div class="form-group">
+          <label class="form-label" for="delete-password-input">Password</label>
+          <input type="password" id="delete-password-input" class="form-input" autocomplete="current-password" oninput="this.setCustomValidity('')" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeDeletePasswordConfirmation()">Cancel</button>
+          <button type="submit" class="btn-delete-confirm">Confirm delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // 1. Load dynamic Teacher Session Data
     const currentUserEmail = localStorage.getItem('currentUser');
@@ -832,6 +1449,9 @@
 
     // 2. Sections Storage Logic
     let sectionsList = JSON.parse(localStorage.getItem('attendify_sections')) || [];
+    let currentSectionIndex = null;
+    let calendarStudentEmail = null;
+    let calendarViewDate = new Date();
 
     function renderSections() {
       const grid = document.getElementById('sections-grid');
@@ -883,6 +1503,58 @@
       document.getElementById('next-class-room').innerText = nextSec.room;
     }
 
+    function deleteSection() {
+      const section = sectionsList[currentSectionIndex];
+
+      if (!section) return;
+      document.getElementById('delete-confirm-modal').classList.add('active');
+    }
+
+    function closeDeleteConfirmation() {
+      document.getElementById('delete-confirm-modal').classList.remove('active');
+    }
+
+    function requestDeletePassword() {
+      if (!sectionsList[currentSectionIndex]) return;
+
+      closeDeleteConfirmation();
+      document.getElementById('delete-password-modal').classList.add('active');
+      document.getElementById('delete-password-input').focus();
+    }
+
+    function closeDeletePasswordConfirmation() {
+      document.getElementById('delete-password-modal').classList.remove('active');
+      const passwordInput = document.getElementById('delete-password-input');
+      passwordInput.value = '';
+      passwordInput.setCustomValidity('');
+    }
+
+    function handleDeletePasswordConfirmation(event) {
+      event.preventDefault();
+      const passwordInput = document.getElementById('delete-password-input');
+
+      if (!passwordInput.value.trim()) {
+        passwordInput.setCustomValidity('Enter your password to continue.');
+        passwordInput.reportValidity();
+        return;
+      }
+
+      passwordInput.setCustomValidity('');
+      closeDeletePasswordConfirmation();
+      confirmDeleteSection();
+    }
+
+    function confirmDeleteSection() {
+      if (!sectionsList[currentSectionIndex]) return;
+
+      sectionsList.splice(currentSectionIndex, 1);
+      localStorage.setItem('attendify_sections', JSON.stringify(sectionsList));
+      closeDeleteConfirmation();
+      closeSectionView();
+      currentSectionIndex = null;
+      renderSections();
+    }
+
     // Modal Helpers
     function openModal() {
       document.getElementById('create-modal').classList.add('active');
@@ -890,6 +1562,38 @@
 
     function closeModal() {
       document.getElementById('create-modal').classList.remove('active');
+    }
+
+    function openEditSectionModal() {
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      document.getElementById('edit-subject').value = section.subject;
+      document.getElementById('edit-section').value = section.section;
+      document.getElementById('edit-room').value = section.room;
+      document.getElementById('edit-schedule').value = section.schedule;
+      document.getElementById('edit-section-modal').classList.add('active');
+      document.getElementById('edit-subject').focus();
+    }
+
+    function closeEditSectionModal() {
+      document.getElementById('edit-section-modal').classList.remove('active');
+    }
+
+    function handleEditSection(event) {
+      event.preventDefault();
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      section.subject = document.getElementById('edit-subject').value.trim();
+      section.section = document.getElementById('edit-section').value.trim();
+      section.room = document.getElementById('edit-room').value.trim();
+      section.schedule = document.getElementById('edit-schedule').value.trim();
+      localStorage.setItem('attendify_sections', JSON.stringify(sectionsList));
+
+      closeEditSectionModal();
+      renderSections();
+      openSectionView(currentSectionIndex);
     }
 
     // Create New Section Form Action
@@ -928,6 +1632,8 @@
     function openSectionView(index) {
       sectionsList = JSON.parse(localStorage.getItem('attendify_sections')) || [];
       const sec = sectionsList[index];
+      if (!sec) return;
+      currentSectionIndex = index;
       document.getElementById('view-meta-code').innerText = `${sec.code} · ${sec.section}`;
       document.getElementById('view-hero-title').innerText = sec.subject;
       document.getElementById('view-card-title').innerText = sec.subject;
@@ -940,10 +1646,30 @@
       document.getElementById('section-view-modal').classList.add('active');
     }
 
+    function getStudentAttendanceKey(student) {
+      return String(student.email || student.studentId || student.name || '').trim().toLowerCase();
+    }
+
+    function getTodayDateKey() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function getAttendanceRecords(section) {
+      return section.attendanceByDate && typeof section.attendanceByDate === 'object'
+        ? section.attendanceByDate
+        : {};
+    }
+
     function renderSectionStudents(section) {
       const rows = document.getElementById('attendance-student-rows');
       const summary = document.getElementById('attendance-student-summary');
       const students = Array.isArray(section.students) ? section.students : [];
+      const attendance = getAttendanceRecords(section);
+      const todayRecords = attendance[getTodayDateKey()] || {};
       rows.replaceChildren();
       summary.innerText = `${students.length} student${students.length === 1 ? '' : 's'} joined with this section code`;
 
@@ -957,31 +1683,260 @@
         return;
       }
 
-      for (const student of students) {
+      students.forEach((student, index) => {
         const row = document.createElement('tr');
+        row.className = 'attendance-student-row';
+        row.tabIndex = 0;
+        row.setAttribute('role', 'button');
         const identityCell = document.createElement('td');
         const name = document.createElement('strong');
-        name.innerText = student.name;
+        name.innerText = student.name || student.email || 'Student';
+        row.setAttribute('aria-label', `View attendance calendar for ${name.innerText}`);
+        row.onclick = () => openStudentCalendar(index);
+        row.onkeydown = event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openStudentCalendar(index);
+          }
+        };
         const studentId = document.createElement('span');
         studentId.style.cssText = 'font-size:0.7rem; color:#9ca3af;';
-        studentId.innerText = student.studentId;
+        studentId.innerText = student.studentId || student.email || '';
         identityCell.append(name, document.createElement('br'), studentId);
         row.append(identityCell);
 
-        for (let column = 0; column < 4; column++) {
+        const studentKey = getStudentAttendanceKey(student);
+        const totals = { present: 0, late: 0, absent: 0 };
+        let recordedDays = 0;
+        for (const dayRecords of Object.values(attendance)) {
+          const status = dayRecords && dayRecords[studentKey];
+          if (Object.prototype.hasOwnProperty.call(totals, status)) {
+            totals[status]++;
+            recordedDays++;
+          }
+        }
+
+        for (const status of ['present', 'late', 'absent']) {
           const cell = document.createElement('td');
-          cell.innerText = '—';
+          cell.innerText = String(totals[status]);
           row.append(cell);
         }
 
+        const rateCell = document.createElement('td');
+        const attendedDays = totals.present + totals.late;
+        rateCell.innerText = recordedDays
+          ? `${Math.round((attendedDays / recordedDays) * 100)}%`
+          : '—';
+        row.append(rateCell);
+
         const statusCell = document.createElement('td');
         const status = document.createElement('span');
-        status.className = 'status-pill status-unmarked';
-        status.innerText = 'Not marked';
+        const todayStatus = todayRecords[studentKey];
+        status.className = `status-pill ${todayStatus ? `status-${todayStatus}` : 'status-unmarked'}`;
+        status.innerText = todayStatus ? todayStatus[0].toUpperCase() + todayStatus.slice(1) : 'Not marked';
         statusCell.append(status);
         row.append(statusCell);
         rows.append(row);
+      });
+    }
+
+    function openAttendanceEntry() {
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      document.getElementById('attendance-date').value = getTodayDateKey();
+      renderAttendanceEntryRows();
+      document.getElementById('attendance-entry-modal').classList.add('active');
+    }
+
+    function renderAttendanceEntryRows() {
+      const rows = document.getElementById('attendance-entry-rows');
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      const students = Array.isArray(section.students) ? section.students : [];
+      const date = document.getElementById('attendance-date').value;
+      const savedStatuses = getAttendanceRecords(section)[date] || {};
+      document.getElementById('save-attendance-btn').disabled = students.length === 0;
+      rows.replaceChildren();
+
+      if (students.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 2;
+        cell.innerText = 'No students have joined this class yet.';
+        row.append(cell);
+        rows.append(row);
+        return;
       }
+
+      students.forEach(student => {
+        const row = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        nameCell.innerText = student.name || student.email || 'Student';
+        const statusCell = document.createElement('td');
+        const select = document.createElement('select');
+        select.className = 'attendance-status-select';
+        select.dataset.studentKey = getStudentAttendanceKey(student);
+        select.required = true;
+
+        const prompt = document.createElement('option');
+        prompt.value = '';
+        prompt.innerText = 'Choose status';
+        select.append(prompt);
+
+        for (const value of ['present', 'late', 'absent']) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.innerText = value[0].toUpperCase() + value.slice(1);
+          select.append(option);
+        }
+
+        select.value = savedStatuses[select.dataset.studentKey] || '';
+        statusCell.append(select);
+        row.append(nameCell, statusCell);
+        rows.append(row);
+      });
+    }
+
+    function closeAttendanceEntry() {
+      document.getElementById('attendance-entry-modal').classList.remove('active');
+    }
+
+    function saveAttendance(event) {
+      event.preventDefault();
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      const date = document.getElementById('attendance-date').value;
+      if (!date) return;
+
+      const statuses = Object.create(null);
+      for (const select of document.querySelectorAll('.attendance-status-select')) {
+        if (!select.value) {
+          select.reportValidity();
+          return;
+        }
+        statuses[select.dataset.studentKey] = select.value;
+      }
+
+      if (Object.keys(statuses).length === 0) return;
+
+      section.attendanceByDate = getAttendanceRecords(section);
+      section.attendanceByDate[date] = statuses;
+      localStorage.setItem('attendify_sections', JSON.stringify(sectionsList));
+      closeAttendanceEntry();
+      renderSectionStudents(section);
+    }
+
+    function openStudentCalendar(studentIndex) {
+      const section = sectionsList[currentSectionIndex];
+      const student = section && Array.isArray(section.students)
+        ? section.students[studentIndex]
+        : null;
+      if (!student) return;
+
+      calendarStudentEmail = getStudentAttendanceKey(student);
+      calendarViewDate = new Date();
+      const studentName = student.name || student.email || 'Student';
+      document.getElementById('student-calendar-name').innerText = studentName;
+      document.getElementById('student-calendar-id').innerText = student.studentId || student.email || '';
+      document.getElementById('student-calendar-avatar').innerText = studentName
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0].toUpperCase())
+        .join('');
+      renderStudentCalendar();
+      document.getElementById('student-calendar-modal').classList.add('active');
+    }
+
+    function changeStudentCalendarMonth(offset) {
+      calendarViewDate = new Date(
+        calendarViewDate.getFullYear(),
+        calendarViewDate.getMonth() + offset,
+        1
+      );
+      renderStudentCalendar();
+    }
+
+    function renderStudentCalendar() {
+      const section = sectionsList[currentSectionIndex];
+      if (!section || !calendarStudentEmail) return;
+
+      const year = calendarViewDate.getFullYear();
+      const month = calendarViewDate.getMonth();
+      const monthName = new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' })
+        .format(calendarViewDate);
+      document.getElementById('student-calendar-month').innerText = monthName;
+
+      const grid = document.getElementById('student-calendar-grid');
+      const emptyMessage = document.getElementById('student-calendar-empty');
+      const dayRecords = getAttendanceRecords(section);
+      const statuses = ['present', 'late', 'absent'];
+      const monthlyTotals = { present: 0, late: 0, absent: 0 };
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      grid.replaceChildren();
+
+      for (const weekday of weekdays) {
+        const heading = document.createElement('div');
+        heading.className = 'calendar-weekday';
+        heading.innerText = weekday;
+        grid.append(heading);
+      }
+
+      for (let blank = 0; blank < firstWeekday; blank++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day is-empty';
+        emptyCell.setAttribute('aria-hidden', 'true');
+        grid.append(emptyCell);
+      }
+
+      let monthHasRecords = false;
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const status = dayRecords[dateKey] && dayRecords[dateKey][calendarStudentEmail];
+        const cell = document.createElement('div');
+        cell.className = `calendar-day${statuses.includes(status) ? ` status-${status}` : ''}`;
+
+        const number = document.createElement('div');
+        number.className = 'calendar-day-number';
+        number.innerText = String(day);
+        cell.append(number);
+
+        if (statuses.includes(status)) {
+          monthHasRecords = true;
+          monthlyTotals[status]++;
+          const statusLabel = document.createElement('div');
+          statusLabel.className = 'calendar-day-status';
+          statusLabel.innerText = status;
+          cell.append(statusLabel);
+        }
+
+        grid.append(cell);
+      }
+
+      const trailingBlanks = (7 - ((firstWeekday + daysInMonth) % 7)) % 7;
+      for (let blank = 0; blank < trailingBlanks; blank++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day is-empty';
+        emptyCell.setAttribute('aria-hidden', 'true');
+        grid.append(emptyCell);
+      }
+
+      document.getElementById('calendar-present-count').innerText = String(monthlyTotals.present);
+      document.getElementById('calendar-late-count').innerText = String(monthlyTotals.late);
+      document.getElementById('calendar-absent-count').innerText = String(monthlyTotals.absent);
+      emptyMessage.innerText = monthHasRecords
+        ? ''
+        : 'No attendance has been recorded for this student in this month.';
+    }
+
+    function closeStudentCalendar() {
+      document.getElementById('student-calendar-modal').classList.remove('active');
+      calendarStudentEmail = null;
     }
 
     function closeSectionView() {
