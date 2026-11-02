@@ -448,6 +448,18 @@
       position: relative;
     }
 
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .modal-close {
       position: absolute;
       top: 20px;
@@ -810,6 +822,160 @@
     .attendance-entry-overlay,
     .student-calendar-overlay {
       z-index: 500;
+    }
+
+    .attendance-scanner-overlay {
+      z-index: 600;
+      padding: 20px;
+    }
+
+    .attendance-scanner-box {
+      max-width: 520px;
+      padding: 0;
+      overflow: hidden;
+      background: #10372f;
+      color: #ffffff;
+    }
+
+    .attendance-scanner-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .attendance-scanner-header .modal-tag {
+      color: #a8dac8;
+    }
+
+    .attendance-scanner-header .modal-title {
+      color: #ffffff;
+      margin: 4px 0 0;
+    }
+
+    .attendance-scanner-header .modal-close {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+
+    .attendance-camera-area {
+      min-height: 300px;
+      background: #071d18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .attendance-camera-area video {
+      display: block;
+      width: 100%;
+      max-height: 360px;
+      object-fit: cover;
+    }
+
+    .attendance-camera-area [hidden] {
+      display: none;
+    }
+
+    .attendance-camera-prompt {
+      padding: 28px;
+      text-align: center;
+      max-width: 360px;
+    }
+
+    .attendance-camera-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #b7dc75;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .attendance-camera-prompt strong {
+      display: block;
+      font-size: 0.85rem;
+    }
+
+    .attendance-camera-message {
+      min-height: 1.2em;
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
+
+    .attendance-camera-enable {
+      margin-top: 14px;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 9px;
+      background: #b7dc75;
+      color: #173a30;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .attendance-camera-enable:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .attendance-scanner-footer {
+      padding: 16px 22px 18px;
+      background: #10372f;
+    }
+
+    .attendance-manual-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .attendance-manual-form .form-input {
+      min-width: 0;
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .attendance-manual-form .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .attendance-manual-form .btn-submit {
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+    }
+
+    .attendance-scanner-note {
+      margin-top: 9px;
+      color: rgba(255, 255, 255, 0.48);
+      text-align: center;
+      font-size: 0.64rem;
+    }
+
+    .attendance-scanner-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .attendance-scanner-actions button {
+      padding: 5px 8px;
+      border: 0;
+      background: transparent;
+      color: #a8dac8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     .attendance-entry-box {
@@ -1275,7 +1441,7 @@
       </div>
       <div style="display: flex; gap: 10px; align-items: center;">
         <button type="button" class="btn-cancel edit-section-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="openEditSectionModal()">Edit section</button>
-        <button type="button" class="btn-submit start-attendance-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="openAttendanceEntry()">+ Start attendance</button>
+        <button type="button" class="btn-submit start-attendance-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="openAttendanceScanner()">+ Start attendance</button>
         <button type="button" class="delete-section-btn" style="padding: 10px 18px; font-size: 0.85rem;" onclick="deleteSection()">Delete class</button>
       </div>
     </div>
@@ -1323,6 +1489,37 @@
         </thead>
         <tbody id="attendance-student-rows"></tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="modal-overlay attendance-scanner-overlay" id="attendance-scanner-modal" role="dialog" aria-modal="true" aria-labelledby="attendance-scanner-title">
+    <div class="modal-box attendance-scanner-box">
+      <div class="attendance-scanner-header">
+        <button type="button" class="modal-close" onclick="closeAttendanceScanner()" aria-label="Close QR scanner">✕</button>
+        <div class="modal-tag">LIVE ATTENDANCE</div>
+        <h3 class="modal-title" id="attendance-scanner-title">Scan student QR code</h3>
+      </div>
+      <div class="attendance-camera-area">
+        <video id="attendance-camera-video" autoplay muted playsinline hidden></video>
+        <div class="attendance-camera-prompt" id="attendance-camera-prompt">
+          <div class="attendance-camera-icon" aria-hidden="true">▣</div>
+          <strong id="attendance-camera-heading">Camera access is required</strong>
+          <p class="attendance-camera-message" id="attendance-camera-message" role="status" aria-live="polite">Use the rear camera and point it at the student's QR pass.</p>
+          <button type="button" class="attendance-camera-enable" id="attendance-camera-enable" onclick="startAttendanceCamera()">Enable camera</button>
+        </div>
+      </div>
+      <div class="attendance-scanner-footer">
+        <p class="attendance-scanner-note" id="attendance-scanner-status" role="status" aria-live="polite">Camera is off.</p>
+        <form class="attendance-manual-form" onsubmit="recordManualAttendance(event)">
+          <label for="attendance-student-identifier" class="visually-hidden">Student ID or email</label>
+          <input type="text" id="attendance-student-identifier" class="form-input" placeholder="Or enter student ID manually" autocomplete="off" required>
+          <button type="submit" class="btn-submit">Record attendance</button>
+        </form>
+        <p class="attendance-scanner-note">Camera processing happens on this device. No video is uploaded.</p>
+        <div class="attendance-scanner-actions">
+          <button type="button" onclick="openAttendanceEntry()">Enter attendance for the whole class</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1452,6 +1649,12 @@
     let currentSectionIndex = null;
     let calendarStudentEmail = null;
     let calendarViewDate = new Date();
+    let attendanceCameraStream = null;
+    let attendanceQrDetector = null;
+    let attendanceScannerActive = false;
+    let attendanceScannerTimer = null;
+    let lastScannedQr = '';
+    let lastScannedAt = 0;
 
     function renderSections() {
       const grid = document.getElementById('sections-grid');
@@ -1740,10 +1943,198 @@
       });
     }
 
+    function setAttendanceScannerMessage(message, isError = false) {
+      const cameraMessage = document.getElementById('attendance-camera-message');
+      const scannerStatus = document.getElementById('attendance-scanner-status');
+      cameraMessage.innerText = message;
+      scannerStatus.innerText = message;
+      scannerStatus.style.color = isError ? '#fecaca' : '';
+    }
+
+    function openAttendanceScanner() {
+      const section = sectionsList[currentSectionIndex];
+      if (!section) return;
+
+      stopAttendanceCamera();
+      lastScannedQr = '';
+      lastScannedAt = 0;
+      document.getElementById('attendance-camera-video').hidden = true;
+      document.getElementById('attendance-camera-prompt').hidden = false;
+      document.getElementById('attendance-camera-enable').disabled = false;
+      document.getElementById('attendance-camera-enable').hidden = false;
+      document.getElementById('attendance-camera-heading').innerText = 'Camera access is required';
+      document.getElementById('attendance-student-identifier').value = '';
+      setAttendanceScannerMessage("Use the rear camera and point it at the student's QR pass.");
+      document.getElementById('attendance-scanner-modal').classList.add('active');
+
+      if (!Array.isArray(section.students) || section.students.length === 0) {
+        setAttendanceScannerMessage('No students have joined this class yet. Students must join before attendance can be recorded.', true);
+      }
+
+      if (typeof BarcodeDetector === 'undefined') {
+        document.getElementById('attendance-camera-enable').hidden = true;
+        document.getElementById('attendance-camera-heading').innerText = 'QR scanning is not supported in this browser';
+        setAttendanceScannerMessage('Use a supported browser or enter the student ID manually below.', true);
+      }
+    }
+
+    function closeAttendanceScanner() {
+      stopAttendanceCamera();
+      document.getElementById('attendance-scanner-modal').classList.remove('active');
+    }
+
+    function stopAttendanceCamera() {
+      attendanceScannerActive = false;
+      if (attendanceScannerTimer !== null) {
+        clearTimeout(attendanceScannerTimer);
+        attendanceScannerTimer = null;
+      }
+      if (attendanceCameraStream) {
+        attendanceCameraStream.getTracks().forEach(track => track.stop());
+        attendanceCameraStream = null;
+      }
+      const video = document.getElementById('attendance-camera-video');
+      if (video) video.srcObject = null;
+      attendanceQrDetector = null;
+    }
+
+    async function startAttendanceCamera() {
+      const enableButton = document.getElementById('attendance-camera-enable');
+      const video = document.getElementById('attendance-camera-video');
+      if (typeof BarcodeDetector === 'undefined') {
+        setAttendanceScannerMessage('QR scanning is not supported in this browser. Enter the student ID manually below.', true);
+        return;
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setAttendanceScannerMessage('Camera access is unavailable. Open this page over HTTPS or localhost, or enter the student ID manually.', true);
+        return;
+      }
+
+      enableButton.disabled = true;
+      setAttendanceScannerMessage('Requesting camera access...');
+      try {
+        attendanceQrDetector = new BarcodeDetector({ formats: ['qr_code'] });
+        attendanceCameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        });
+        video.srcObject = attendanceCameraStream;
+        await video.play();
+        document.getElementById('attendance-camera-prompt').hidden = true;
+        video.hidden = false;
+        attendanceScannerActive = true;
+        setAttendanceScannerMessage('Point the camera at a student QR pass to record attendance.');
+        scanAttendanceQr();
+      } catch (error) {
+        stopAttendanceCamera();
+        enableButton.disabled = false;
+        const detail = error && error.name === 'NotAllowedError'
+          ? 'Camera permission was denied. Allow camera access in your browser settings, or enter the student ID manually.'
+          : `Could not start the camera${error && error.message ? `: ${error.message}` : '.'}`;
+        setAttendanceScannerMessage(detail, true);
+      }
+    }
+
+    async function scanAttendanceQr() {
+      if (!attendanceScannerActive) return;
+
+      try {
+        const video = document.getElementById('attendance-camera-video');
+        const detections = await attendanceQrDetector.detect(video);
+        const code = detections.find(detection => detection.rawValue);
+        if (code) {
+          const now = Date.now();
+          if (code.rawValue !== lastScannedQr || now - lastScannedAt > 2500) {
+            lastScannedQr = code.rawValue;
+            lastScannedAt = now;
+            recordAttendanceFromQr(code.rawValue);
+          }
+        }
+      } catch (error) {
+        stopAttendanceCamera();
+        document.getElementById('attendance-camera-prompt').hidden = false;
+        document.getElementById('attendance-camera-heading').innerText = 'Unable to scan this camera';
+        document.getElementById('attendance-camera-enable').disabled = false;
+        setAttendanceScannerMessage(`QR scanning failed${error && error.message ? `: ${error.message}` : '.'} You can try the camera again or enter a student ID manually.`, true);
+        return;
+      }
+
+      if (attendanceScannerActive) {
+        attendanceScannerTimer = setTimeout(scanAttendanceQr, 250);
+      }
+    }
+
+    function findSectionStudent(identifier, email = '') {
+      const section = sectionsList[currentSectionIndex];
+      const students = section && Array.isArray(section.students) ? section.students : [];
+      const normalizedIdentifier = String(identifier || '').trim().toLowerCase();
+      const normalizedEmail = String(email || '').trim().toLowerCase();
+      return students.find(student => {
+        const studentId = String(student.studentId || '').trim().toLowerCase();
+        const studentEmail = String(student.email || '').trim().toLowerCase();
+        const attendanceKey = getStudentAttendanceKey(student);
+        return (normalizedIdentifier && (
+          studentId === normalizedIdentifier ||
+          studentEmail === normalizedIdentifier ||
+          attendanceKey === normalizedIdentifier
+        )) || (normalizedEmail && studentEmail === normalizedEmail);
+      }) || null;
+    }
+
+    function recordAttendanceForStudent(student) {
+      const section = sectionsList[currentSectionIndex];
+      if (!section || !student) return false;
+
+      const date = getTodayDateKey();
+      const studentKey = getStudentAttendanceKey(student);
+      const attendanceByDate = getAttendanceRecords(section);
+      const statuses = Object.assign(Object.create(null), attendanceByDate[date] || {});
+      if (statuses[studentKey] === 'present') {
+        setAttendanceScannerMessage(`${student.name || student.email || 'Student'} is already marked present today.`);
+        return true;
+      }
+
+      statuses[studentKey] = 'present';
+      section.attendanceByDate = attendanceByDate;
+      section.attendanceByDate[date] = statuses;
+      localStorage.setItem('attendify_sections', JSON.stringify(sectionsList));
+      renderSectionStudents(section);
+      setAttendanceScannerMessage(`${student.name || student.email || 'Student'} marked present for today.`);
+      return true;
+    }
+
+    function recordAttendanceFromQr(rawValue) {
+      const qrParts = String(rawValue || '').trim().split(':');
+      if (qrParts.length !== 3 || qrParts[0].toUpperCase() !== 'ATTENDIFY') {
+        setAttendanceScannerMessage('This is not a valid Attendify student QR code.', true);
+        return;
+      }
+
+      const student = findSectionStudent(qrParts[1], qrParts[2]);
+      if (!student) {
+        setAttendanceScannerMessage('This student has not joined the selected class.', true);
+        return;
+      }
+      recordAttendanceForStudent(student);
+    }
+
+    function recordManualAttendance(event) {
+      event.preventDefault();
+      const input = document.getElementById('attendance-student-identifier');
+      const student = findSectionStudent(input.value);
+      if (!student) {
+        setAttendanceScannerMessage('No student with that ID or email was found in this class.', true);
+        input.focus();
+        return;
+      }
+      if (recordAttendanceForStudent(student)) input.value = '';
+    }
+
     function openAttendanceEntry() {
       const section = sectionsList[currentSectionIndex];
       if (!section) return;
 
+      closeAttendanceScanner();
       document.getElementById('attendance-date').value = getTodayDateKey();
       renderAttendanceEntryRows();
       document.getElementById('attendance-entry-modal').classList.add('active');
